@@ -1,0 +1,64 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="bower_components/promise-polyfill/promise-polyfill-lite.html">
+<link rel="import" href="bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="bower_components/iron-ajax/iron-request.html">
+
+<dom-module id="computadora-jofd">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+  </template>
+
+  <script>
+    /**
+     * `computadora-jofd`
+     * 
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class ComputadoraJofd extends Polymer.Element {
+      static get is() { return 'computadora-jofd'; }
+      static get properties() {
+        return {
+          prop1: {
+            type: String,
+            value: 'computadora-jofd'
+          },
+          hdd: {
+            type: Array,
+            value: () => {
+              return [{}]
+            }
+          }
+        };
+      }
+      ready() {
+        super.ready()
+        let request = document.createElement('iron-request')
+        request.send({
+          method: 'GET',
+          url: 'https://demo6292426.mockable.io/hddList',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          handleAs: 'json'
+        })
+
+        request.completes.then(success => {
+          console.log('Response: ', success.response)
+        }).catch(error => {
+          console.error(error)
+        }).finally(() => {
+          console.log('finally')
+        })
+      }
+    }
+
+    window.customElements.define(ComputadoraJofd.is, ComputadoraJofd);
+  </script>
+</dom-module>
