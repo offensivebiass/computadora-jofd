@@ -1,11 +1,35 @@
 <link rel="import" href="../polymer/polymer-element.html">
 <link rel="import" href="bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="bower_components/paper-card/paper-card.html">
+<link rel="import" href="bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
 
 <dom-module id="computadora-jofd">
   <template>
     <style>
       :host {
         display: block;
+      }
+
+      paper-card {
+        width: 85%;
+      }
+
+      .paper-card-bash {
+        top: 20px;
+        bottom: 40px;
+        width: 85%;
+        background: #353535d2;
+      }
+
+      .container {
+        display: -webkit-box;
+        display: -moz-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       .principal-buttons {
@@ -15,12 +39,30 @@
       }
     </style>
 
-    <ul>
-      <template is="dom-if" if=[[hdd]]>
-        <template is="dom-repeat" items="[[hdd.data]]">
-          <li>[[item.speed]]: [[item.size]] - [[item.provider]](serial[[item.serial]])</li>
+    <div class="container">
+      <paper-card>
+        <div class="card-content">
+          <p>Computadora de Alex</p>
+          <div class="principal-buttons">
+            <paper-icon-button icon="settings"></paper-icon-button>
+            <paper-icon-button icon="restore" disabled="[[isOff]]"></paper-icon-button>
+            <paper-icon-button icon="power-settings-new" on-click="turnOnComputer"></paper-icon-button>
 
-        </template>
+          </div>
+        </div>
+      </paper-card>
+    </div>
+    <ul>
+      <template is="dom-if" if=[[!isOff]]>
+        <div class="container">
+          <paper-card class="paper-card-bash">
+            <template is="dom-repeat" items="[[hdd.data]]">
+              <div class="card-content">
+                <li>[[item.speed]]: [[item.size]] - [[item.provider]](serial[[item.serial]])</li>
+              </div>
+            </template>
+          </paper-card>
+        </div>
       </template>
     </ul>
   </template>
@@ -38,9 +80,9 @@
       static get is() { return 'computadora-jofd'; }
       static get properties() {
         return {
-          prop1: {
-            type: String,
-            value: 'computadora-jofd'
+          isOff: {
+            type: Boolean,
+            value: true
           },
           hdd: {
             type: Array,
@@ -50,26 +92,34 @@
           }
         };
       }
+      turnOnComputer() {
+        if (this.isOff) {
+          this.isOff = false
+          let request = document.createElement('iron-request')
+          request.send({
+            method: 'GET',
+            url: 'https://demo6292426.mockable.io/hddList',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            handleAs: 'json'
+          })
+
+          request.completes.then(success => {
+            console.log('Response: ', success.response)
+            this.hdd = success.response
+          }).catch(error => {
+            console.error(error)
+          }).finally(() => {
+            console.log('finally')
+          })
+        } else{
+          this.isOff = true
+        }
+      }
       ready() {
         super.ready()
-        let request = document.createElement('iron-request')
-        request.send({
-          method: 'GET',
-          url: 'https://demo6292426.mockable.io/hddList',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          handleAs: 'json'
-        })
 
-        request.completes.then(success => {
-          console.log('Response: ', success.response)
-          this.hdd = success.response
-        }).catch(error => {
-          console.error(error)
-        }).finally(() => {
-          console.log('finally')
-        })
       }
     }
 
