@@ -1,0 +1,68 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="bower_components/iron-ajax/iron-ajax.html">
+
+<dom-module id="processor-component">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+        </style>
+        <p>Cargando Procesador...</p>
+        <template is="dom-if" if="[[isProcessorReady]]">
+            Procesador: [[processor.provider]][[processor.serial]] - [[processor.cores]] Nucleo(s)
+        </template>
+    </template>
+
+    <script>
+        /**
+         * `processor-component`
+         * 
+         *
+         * @customElement
+         * @polymer
+         * @demo demo/index.html
+         */
+        class ProcessorComponent extends Polymer.Element {
+            static get is() { return 'processor-component'; }
+            static get properties() {
+                return {
+                    processor: {
+                        type: Object,
+                        value: () => {
+                            return []
+                        }
+                    },
+                    isProcessorReady: {
+                        type: Boolean,
+                        value: false,
+                        notify: true
+                    }
+                };
+            }
+            ready() {
+                super.ready()
+                let request = document.createElement('iron-request')
+                request.send({
+                    method: 'GET',
+                    url: 'http://www.mocky.io/v2/5d80f04630000080d28e7391',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    handleAs: 'json'
+                })
+
+                request.completes.then(success => {
+                    setTimeout(() => {
+                        this.processor = success.response[0]
+                        this.isProcessorReady = true
+                    }, 2000);
+                }).catch(error => {
+                }).finally(() => {
+                })
+            }
+        }
+
+        window.customElements.define(ProcessorComponent.is, ProcessorComponent);
+    </script>
+</dom-module>

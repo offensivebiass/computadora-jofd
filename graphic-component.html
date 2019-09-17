@@ -1,0 +1,68 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="bower_components/iron-ajax/iron-ajax.html">
+
+<dom-module id="graphic-component">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+        </style>
+        <p>Cargando Taerjeta Grafica...</p>
+        <template is="dom-if" if="[[isGraphicReady]]">
+            Tarjeta Grafica: [[graphic.size]] [[graphic.provider]] [[graphic.title]]
+        </template>
+    </template>
+
+    <script>
+        /**
+         * `graphic-component`
+         * 
+         *
+         * @customElement
+         * @polymer
+         * @demo demo/index.html
+         */
+        class GraphicComponent extends Polymer.Element {
+            static get is() { return 'graphic-component'; }
+            static get properties() {
+                return {
+                    graphic: {
+                        type: Object,
+                        value: () => {
+                            return []
+                        }
+                    },
+                    isGraphicReady: {
+                        type: Boolean,
+                        value: false,
+                        notify: true
+                    }
+                };
+            }
+            ready() {
+                super.ready()
+                let request = document.createElement('iron-request')
+                request.send({
+                    method: 'GET',
+                    url: 'http://www.mocky.io/v2/5d80efb33000004af28e7389',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    handleAs: 'json'
+                })
+
+                request.completes.then(success => {
+                    setTimeout(() => {
+                        this.graphic = success.response[0]
+                        this.isGraphicReady = true
+                    }, 2000);
+                }).catch(error => {
+                }).finally(() => {
+                })
+            }
+        }
+
+        window.customElements.define(GraphicComponent.is, GraphicComponent);
+    </script>
+</dom-module>

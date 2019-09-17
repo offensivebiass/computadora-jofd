@@ -1,39 +1,49 @@
 <link rel="import" href="../polymer/polymer-element.html">
-<link rel="import" href="bower_components/promise-polyfill/promise-polyfill-lite.html">
 <link rel="import" href="bower_components/iron-ajax/iron-ajax.html">
-<link rel="import" href="bower_components/iron-ajax/iron-request.html">
 
-<dom-module id="computadora-jofd">
+<dom-module id="ram-component">
   <template>
     <style>
       :host {
         display: block;
       }
     </style>
+    <p>Cargando RAM...</p>
+    <template is="dom-if" if="[[isRamRedy]]">
+      RAM: [[ram.size]] - [[ram.provider]](Serial[[ram.serial]])
+    </template>
   </template>
 
   <script>
     /**
-     * `computadora-jofd`
+     * `ram-component`
      * 
      *
      * @customElement
      * @polymer
      * @demo demo/index.html
      */
-    class ComputadoraJofd extends Polymer.Element {
-      static get is() { return 'computadora-jofd'; }
+    class RamComponent extends Polymer.Element {
+      static get is() { return 'ram-component'; }
       static get properties() {
         return {
-          prop1: {
-            type: String,
-            value: 'computadora-jofd'
+          ram: {
+            type: Object,
+            value: () => {
+              return []
+            }
           },
-          hdd: {
+          ramList: {
             type: Array,
             value: () => {
               return [{}]
-            }
+            },
+            notify: true
+          },
+          isRamRedy: {
+            type: Boolean,
+            value: false,
+            notify: true
           }
         };
       }
@@ -42,7 +52,7 @@
         let request = document.createElement('iron-request')
         request.send({
           method: 'GET',
-          url: 'https://demo6292426.mockable.io/hddList',
+          url: 'http://www.mocky.io/v2/5d80f0d23000004cf28e7394',
           headers: {
             'Content-Type': 'application/json'
           },
@@ -50,15 +60,17 @@
         })
 
         request.completes.then(success => {
-          console.log('Response: ', success.response)
+          setTimeout(() => {
+            this.ram = success.response[0]
+            this.ramList = success.response
+            this.isRamRedy = true
+          }, 2000);
         }).catch(error => {
-          console.error(error)
         }).finally(() => {
-          console.log('finally')
         })
       }
     }
 
-    window.customElements.define(ComputadoraJofd.is, ComputadoraJofd);
+    window.customElements.define(RamComponent.is, RamComponent);
   </script>
 </dom-module>

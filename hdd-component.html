@@ -1,0 +1,68 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="bower_components/iron-ajax/iron-ajax.html">
+
+<dom-module id="hdd-component">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+        </style>
+        <p>Cargando HDD...</p>
+        <template is="dom-if" if="[[isHddReady]]">
+            HDD: [[hdd.size]] - [[hdd.provider]](Serial[[hdd.serial]])
+        </template>
+    </template>
+
+    <script>
+        /**
+         * `hdd-component`
+         * 
+         *
+         * @customElement
+         * @polymer
+         * @demo demo/index.html
+         */
+        class HddComponent extends Polymer.Element {
+            static get is() { return 'hdd-component'; }
+            static get properties() {
+                return {
+                    hdd: {
+                        type: Object,
+                        value: () => {
+                            return []
+                        }
+                    },
+                    isHddReady: {
+                        type: Boolean,
+                        value: false,
+                        notify: true
+                    }
+                };
+            }
+            ready() {
+                super.ready()
+                let request = document.createElement('iron-request')
+                request.send({
+                    method: 'GET',
+                    url: 'http://www.mocky.io/v2/5d80eeb13000004cf28e737a',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    handleAs: 'json'
+                })
+
+                request.completes.then(success => {
+                    setTimeout(() => {
+                        this.hdd = success.response[0]
+                        this.isHddReady = true
+                    }, 2000);
+                }).catch(error => {
+                }).finally(() => {
+                })
+            }
+        }
+
+        window.customElements.define(HddComponent.is, HddComponent);
+    </script>
+</dom-module>

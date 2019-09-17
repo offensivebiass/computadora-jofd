@@ -1,0 +1,65 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="bower_components/isw-dialog/isw-dialog.html">
+<link rel="import" href="bower_components/isw">
+
+<dom-module id="config-component">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+        </style>
+        <p>Personaliza tu computadora</p>
+        <paper-button raised on-click="open">RAM</paper-button>
+        <paper-button raised>HDD</paper-button>
+        <paper-button raised>PROCESADOR</paper-button>
+        <paper-button raised>TARJETA GRAFICA</paper-button>
+    </template>
+
+    <isw-dialog name="ramDialog" data="{{ramList1}}">
+        <h2>RAM disponibles</h2>
+        <template is="dom-repeat" items="[[ramList1]]">
+            [[items.size]]
+        </template>
+        <div class="buttons">
+            <paper-button dialog-dismiss>Cancel</paper-button>
+            <paper-button dialog-confirm autofocus>Accept</paper-button>
+        </div>
+    </isw-dialog>
+
+    <isw-dialog-remote id="dialogRemote" dialog="ramDialog" data="[[ramList]]"
+        on-iron-overlay-closed="_closed">
+    </isw-dialog-remote>
+
+    <script>
+        /**
+         * `config-component`
+         * 
+         *
+         * @customElement
+         * @polymer
+         * @demo demo/index.html
+         */
+        class ConfigComponent extends Polymer.Element {
+            static get is() { return 'config-component'; }
+            static get properties() {
+                return {
+                    ramList: {
+                        type: Array,
+                        value: () => {
+                            return [{}]
+                        },
+                        notify: true
+                    }
+                };
+            }
+
+            open() {
+                this.$.dialogRemote.open();
+            }
+        }
+
+        window.customElements.define(ConfigComponent.is, ConfigComponent);
+    </script>
+</dom-module>
