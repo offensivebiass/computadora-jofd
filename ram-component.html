@@ -1,5 +1,7 @@
 <link rel="import" href="../polymer/polymer-element.html">
 <link rel="import" href="bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="bower_components/vaadin-dialog/theme/material/vaadin-dialog.html">
+<link rel="import" href="bower_components/vaadin-button/theme/material/vaadin-button.html">
 
 <dom-module id="ram-component">
   <template>
@@ -8,10 +10,47 @@
         display: block;
       }
     </style>
-    <p>Cargando RAM...</p>
-    <template is="dom-if" if="[[isRamRedy]]">
+
+    <!-- <paper-dialog class="modalOfReports" id="scrolling" modal>
+      <h2>RAM Disponibles</h2>
+
+      <paper-dialog-scrollable>
+        <ul>
+          <template is="dom-repeat" items="[[ram]]">
+            <li class="chosen-li" on-click="saveItem">[[item.size]] : [[item.price]] : [[item.speed]]</li>
+          </template>
+        </ul>
+      </paper-dialog-scrollable>
+
+      <div class="buttons">
+
+        <paper-button class="exit-button" on-click="exitWindow" dialog-dismiss>Cancelar</paper-button>
+
+        <paper-button class="accept-btn" on-click="printChosenRam" dialog-confirm autofocus>Acceptar
+        </paper-button>
+
+      </div>
+    </paper-dialog> -->
+
+    <!-- <template is="dom-if" if="[[isRamRedy]]">
       RAM: [[ram.size]] - [[ram.provider]](Serial[[ram.serial]])
-    </template>
+    </template> -->
+
+
+    <vaadin-dialog aria-label="simple"></vaadin-dialog>
+    <vaadin-button>Show dialog</vaadin-button>
+    <script>
+      customElements.whenDefined('vaadin-dialog').then(function () {
+        const dialog = document.querySelector('vaadin-dialog');
+        dialog.renderer = function (root, dialog) {
+          root.textContent = 'This simple dialog will close by pressing the Esc key, or by a mouse click anywhere outside the dialog area';
+        };
+        document.querySelector('vaadin-button').addEventListener('click', function () {
+          dialog.opened = true;
+        });
+      });
+    </script>
+
   </template>
 
   <script>

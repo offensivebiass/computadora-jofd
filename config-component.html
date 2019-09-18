@@ -1,7 +1,8 @@
 <link rel="import" href="../polymer/polymer-element.html">
 <link rel="import" href="bower_components/iron-ajax/iron-ajax.html">
-<link rel="import" href="bower_components/isw-dialog/isw-dialog.html">
-<link rel="import" href="bower_components/isw">
+<link rel="import" href="bower_components/vaadin-dialog/vaadin-dialog.html">
+<link rel="import" href="bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 
 <dom-module id="config-component">
     <template>
@@ -9,29 +10,24 @@
             :host {
                 display: block;
             }
+
+            .modalOfReports {
+                width: 700px;
+                height: 550px;
+            }
         </style>
         <p>Personaliza tu computadora</p>
-        <paper-button raised on-click="open">RAM</paper-button>
+
+        <ram-component></ram-component>
+        <hdd-componen></hdd-componen>
+        <processor-component></processor-component>
+        <graphic-component></graphic-component>
+
+        <!-- <paper-button raised on-click="openRam">RAM</paper-button>
         <paper-button raised>HDD</paper-button>
         <paper-button raised>PROCESADOR</paper-button>
-        <paper-button raised>TARJETA GRAFICA</paper-button>
+        <paper-button raised>TARJETA GRAFICA</paper-button> -->
     </template>
-
-    <isw-dialog name="ramDialog" data="{{ramList1}}">
-        <h2>RAM disponibles</h2>
-        <template is="dom-repeat" items="[[ramList1]]">
-            [[items.size]]
-        </template>
-        <div class="buttons">
-            <paper-button dialog-dismiss>Cancel</paper-button>
-            <paper-button dialog-confirm autofocus>Accept</paper-button>
-        </div>
-    </isw-dialog>
-
-    <isw-dialog-remote id="dialogRemote" dialog="ramDialog" data="[[ramList]]"
-        on-iron-overlay-closed="_closed">
-    </isw-dialog-remote>
-
     <script>
         /**
          * `config-component`
@@ -53,10 +49,6 @@
                         notify: true
                     }
                 };
-            }
-
-            open() {
-                this.$.dialogRemote.open();
             }
         }
 

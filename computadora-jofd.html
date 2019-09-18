@@ -53,6 +53,14 @@
         top: 20px;
         position: absolute;
       }
+
+      .blue {
+        color: midnightblue
+      }
+
+      .pink {
+        color: purple
+      }
     </style>
 
     <div class="container">
@@ -81,19 +89,28 @@
     <template is="dom-if" if=[[!isOff]]>
       <div class="container">
         <paper-card class="paper-card-bash">
-          <ram-component is-ram-redy="{{isRamRedy}}" ram-list="{{ramList}}"></ram-component>
-          <template is="dom-if" if="{{isRamRedy}}">
-            <hdd-component is-hdd-ready="{{isHddReady}}" hdd-list="{{hddList}}"></hdd-component>
-          </template>
-          <template is="dom-if" if="{{isHddReady}}">
-            <processor-component is-processor-ready="{{isProcessorReady}}" processor-list="{{processorList}}"></processor-component>
-          </template>
-          <template is="dom-if" if="{{isProcessorReady}}">
-            <graphic-component graphic-list="{{graphicList}}"></graphic-component>
+          <div class="blue">Team</div>
+          <div class="pink">Cells </div> (build 3.0)
+          <br>
+          Cargando componentes del sistema
+          <template is="dom-repeat" items="[[messages]]">
+            <p>[[item.messageTitle]]</p>
           </template>
         </paper-card>
       </div>
     </template>
+
+    <!-- <ram-component is-ram-redy="{{isRamRedy}}" ram-list="{{ramList}}"></ram-component>
+          <template is="dom-if" if="{{isRamRedy}}">
+            <hdd-component is-hdd-ready="{{isHddReady}}" hdd-list="{{hddList}}"></hdd-component>
+          </template>
+          <template is="dom-if" if="{{isHddReady}}">
+            <processor-component is-processor-ready="{{isProcessorReady}}" processor-list="{{processorList}}">
+            </processor-component>
+          </template>
+          <template is="dom-if" if="{{isProcessorReady}}">
+            <graphic-component graphic-list="{{graphicList}}"></graphic-component>
+          </template> -->
 
   </template>
 
@@ -123,6 +140,12 @@
             value: () => {
               return []
             }
+          },
+          messages: {
+            type: Array,
+            value: () => {
+              return [{}]
+            }
           }
         };
       }
@@ -131,6 +154,35 @@
         if (this.isOff) {
           this.configMode = false
           this.isOff = false
+
+          setTimeout(() => {
+            this.push('messages', {
+              messageTitle: 'Cargando RAM ...',
+            })
+            this.notifyPath('messages', this.messages)
+          }, 3000);
+
+          setTimeout(() => {
+            this.push('messages', {
+              messageTitle: 'RAM: 16GB - Seagate (serial22738) 220MHz',
+            })
+            this.notifyPath('messages', this.messages)
+          }, 3000);
+
+          setTimeout(() => {
+            this.push('messages', {
+              messageTitle: 'Cargando HDD ...',
+            })
+            this.notifyPath('messages', this.messages)
+          }, 3000);
+
+          setTimeout(() => {
+            this.push('messages', {
+              messageTitle: 'Cargando Procesador ...',
+            })
+            this.notifyPath('messages', this.messages)
+          }, 3000);
+
         } else {
           this.isOff = true
         }
