@@ -1,7 +1,10 @@
 <link rel="import" href="../polymer/polymer-element.html">
 <link rel="import" href="bower_components/iron-ajax/iron-ajax.html">
-<link rel="import" href="bower_components/vaadin-dialog/theme/material/vaadin-dialog.html">
-<link rel="import" href="bower_components/vaadin-button/theme/material/vaadin-button.html">
+<link rel="import" href="bower_components/vaadin-dialog/vaadin-dialog.html">
+<link rel="import" href="bower_components/vaadin-button/vaadin-button.html">
+<link rel="import" href="bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="bower_components/paper-button/paper-button.html">
 
 <dom-module id="ram-component">
   <template>
@@ -9,15 +12,34 @@
       :host {
         display: block;
       }
+
+      .modalOfReports {
+        width: 700px;
+        height: 550px;
+      }
+
+      .chosen-li {
+        padding: 15px;
+      }
+
+      .chosen-li:hover {
+        background: rgba(161, 161, 161, 0.164)
+      }
+
+      ul {
+        list-style-type: none;
+      }
     </style>
 
-    <!-- <paper-dialog class="modalOfReports" id="scrolling" modal>
+    <paper-button raised on-click="open">RAM</paper-button>
+
+    <paper-dialog class="modalOfReports" id="dialog" modal>
       <h2>RAM Disponibles</h2>
 
       <paper-dialog-scrollable>
         <ul>
-          <template is="dom-repeat" items="[[ram]]">
-            <li class="chosen-li" on-click="saveItem">[[item.size]] : [[item.price]] : [[item.speed]]</li>
+          <template is="dom-repeat" items="[[ramList]]">
+            <li class="chosen-li" on-click="close">[[item.size]] [[item.provider]] Serial: [[item.serial]]</li>
           </template>
         </ul>
       </paper-dialog-scrollable>
@@ -30,26 +52,7 @@
         </paper-button>
 
       </div>
-    </paper-dialog> -->
-
-    <!-- <template is="dom-if" if="[[isRamRedy]]">
-      RAM: [[ram.size]] - [[ram.provider]](Serial[[ram.serial]])
-    </template> -->
-
-
-    <vaadin-dialog aria-label="simple"></vaadin-dialog>
-    <vaadin-button>Show dialog</vaadin-button>
-    <script>
-      customElements.whenDefined('vaadin-dialog').then(function () {
-        const dialog = document.querySelector('vaadin-dialog');
-        dialog.renderer = function (root, dialog) {
-          root.textContent = 'This simple dialog will close by pressing the Esc key, or by a mouse click anywhere outside the dialog area';
-        };
-        document.querySelector('vaadin-button').addEventListener('click', function () {
-          dialog.opened = true;
-        });
-      });
-    </script>
+    </paper-dialog>
 
   </template>
 
@@ -70,14 +73,14 @@
             type: Object,
             value: () => {
               return []
-            }
+            },
+            notify: true
           },
           ramList: {
             type: Array,
             value: () => {
               return [{}]
-            },
-            notify: true
+            }
           },
           isRamRedy: {
             type: Boolean,
@@ -86,8 +89,20 @@
           }
         };
       }
+
+      open() {
+        this.$.dialog.open()
+      }
+
+      close(e) {
+        this.isRamRedy = true
+        this.ram = e.model.get('item')
+        this.$.dialog.close()
+      }
+
       ready() {
         super.ready()
+
         let request = document.createElement('iron-request')
         request.send({
           method: 'GET',
@@ -100,9 +115,7 @@
 
         request.completes.then(success => {
           setTimeout(() => {
-            this.ram = success.response[0]
             this.ramList = success.response
-            this.isRamRedy = true
           }, 2000);
         }).catch(error => {
         }).finally(() => {

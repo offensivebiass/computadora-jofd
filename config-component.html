@@ -18,10 +18,14 @@
         </style>
         <p>Personaliza tu computadora</p>
 
-        <ram-component></ram-component>
-        <hdd-componen></hdd-componen>
-        <processor-component></processor-component>
-        <graphic-component></graphic-component>
+        <ram-component is-ram-ready="{{isRamReady}}" ram="{{ram}}"></ram-component>
+        <hdd-componen hdd="{{hdd}}"></hdd-componen>
+        <processor-component processor={{processor}}></processor-component>
+        <graphic-component graphic="{{graphic}}"></graphic-component>
+
+        <template is="dom-if" if="{{isRamReady}}">
+            <p>RAM: [[ram.size]] [[ram.provider]] Serial: [[ram.serial]]</p>
+        </template>
 
         <!-- <paper-button raised on-click="openRam">RAM</paper-button>
         <paper-button raised>HDD</paper-button>
@@ -41,14 +45,23 @@
             static get is() { return 'config-component'; }
             static get properties() {
                 return {
-                    ramList: {
+                    ram: {
                         type: Array,
                         value: () => {
-                            return [{}]
+                            return []
                         },
+                        notify: true
+                    },
+                    isRamReady: {
+                        type: Boolean,
+                        value: false,
+                        observable: "_test()",
                         notify: true
                     }
                 };
+            }
+            _test(newValue, oldValue) {
+                console.log(oldValue, newValue)
             }
         }
 
