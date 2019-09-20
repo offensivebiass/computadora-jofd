@@ -1,5 +1,8 @@
 <link rel="import" href="../polymer/polymer-element.html">
 <link rel="import" href="bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="bower_components/paper-button/paper-button.html">
 
 <dom-module id="hdd-component">
     <template>
@@ -7,7 +10,49 @@
             :host {
                 display: block;
             }
+
+            .modalOfReports {
+                width: 700px;
+                height: 550px;
+            }
+
+            .chosen-li {
+                padding: 15px;
+            }
+
+            .chosen-li:hover {
+                background: rgba(161, 161, 161, 0.164)
+            }
+
+            ul {
+                list-style-type: none;
+            }
         </style>
+
+        <paper-button raised on-click="open">HDD</paper-button>
+
+        <paper-dialog class="modalOfReports" id="dialog" modal>
+            <h2>HDD Disponibles</h2>
+
+            <paper-dialog-scrollable>
+                <ul>
+                    <template is="dom-repeat" items="[[hddList]]">
+                        <li class="chosen-li" on-click="close">[[item.size]] [[item.provider]] Serial: [[item.serial]]
+                        </li>
+                    </template>
+                </ul>
+            </paper-dialog-scrollable>
+
+            <div class="buttons">
+
+                <paper-button class="exit-button" on-click="exitWindow" dialog-dismiss>Cancelar</paper-button>
+
+                <paper-button class="accept-btn" on-click="printChosenRam" dialog-confirm autofocus>Acceptar
+                </paper-button>
+
+            </div>
+        </paper-dialog>
+
         <!-- <p>Cargando HDD...</p>
         <template is="dom-if" if="[[isHddReady]]">
             HDD: [[hdd.size]] - [[hdd.provider]](Serial[[hdd.serial]])
@@ -31,6 +76,13 @@
                         type: Object,
                         value: () => {
                             return []
+                        },
+                        notify: true
+                    },
+                    hddList: {
+                        type: Array,
+                        value: () => {
+                            return [{}]
                         }
                     },
                     isHddReady: {
@@ -40,6 +92,17 @@
                     }
                 };
             }
+
+            open() {
+                this.$.dialog.open()
+            }
+
+            close(e) {
+                this.isHddReady = true
+                this.hdd = e.model.get('item')
+                this.$.dialog.close()
+            }
+
             ready() {
                 super.ready()
                 let request = document.createElement('iron-request')
@@ -54,8 +117,7 @@
 
                 request.completes.then(success => {
                     setTimeout(() => {
-                        this.hdd = success.response[0]
-                        this.isHddReady = true
+                        this.hddList = success.response
                     }, 2000);
                 }).catch(error => {
                 }).finally(() => {

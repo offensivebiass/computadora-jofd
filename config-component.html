@@ -3,6 +3,8 @@
 <link rel="import" href="bower_components/vaadin-dialog/vaadin-dialog.html">
 <link rel="import" href="bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="ram-component.html">
+<link rel="import" href="hdd-component.html">
 
 <dom-module id="config-component">
     <template>
@@ -18,13 +20,25 @@
         </style>
         <p>Personaliza tu computadora</p>
 
-        <ram-component is-ram-ready="{{isRamReady}}" ram="{{ram}}"></ram-component>
-        <hdd-componen hdd="{{hdd}}"></hdd-componen>
+        <ram-component ram="{{ram}}"></ram-component>
+        <hdd-component hdd="{{hdd}}"></hdd-component>
         <processor-component processor={{processor}}></processor-component>
         <graphic-component graphic="{{graphic}}"></graphic-component>
 
-        <template is="dom-if" if="{{isRamReady}}">
+        <template is="dom-if" if="{{ram.size}}">
             <p>RAM: [[ram.size]] [[ram.provider]] Serial: [[ram.serial]]</p>
+        </template>
+
+        <template is="dom-if" if="{{hdd.size}}">
+            <p>HDD: [[hdd.size]] [[hdd.provider]] Serial: [[hdd.serial]]</p>
+        </template>
+
+        <template is="dom-if" if="{{processor.cores}}">
+            <p>Procesador: [[processor.provider]] Nucelo(s) [[processor.cores]] Serial: [[processor.serial]]</p>
+        </template>
+
+        <template is="dom-if" if="{{graphic.size}}">
+            <p>Tarjeta grafica: [[graphic.size]] [[graphic.provider]] [[graphic.title]]</p>
         </template>
 
         <!-- <paper-button raised on-click="openRam">RAM</paper-button>
@@ -52,16 +66,28 @@
                         },
                         notify: true
                     },
-                    isRamReady: {
-                        type: Boolean,
-                        value: false,
-                        observable: "_test()",
+                    hdd: {
+                        type: Array,
+                        value: () => {
+                            return []
+                        },
                         notify: true
-                    }
+                    },
+                    processor: {
+                        type: Array,
+                        value: () => {
+                            return []
+                        },
+                        notify: true
+                    },
+                    graphic: {
+                        type: Array,
+                        value: () => {
+                            return []
+                        },
+                        notify: true
+                    },
                 };
-            }
-            _test(newValue, oldValue) {
-                console.log(oldValue, newValue)
             }
         }
 

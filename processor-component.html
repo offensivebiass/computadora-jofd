@@ -7,7 +7,49 @@
             :host {
                 display: block;
             }
+
+            .modalOfReports {
+                width: 700px;
+                height: 550px;
+            }
+
+            .chosen-li {
+                padding: 15px;
+            }
+
+            .chosen-li:hover {
+                background: rgba(161, 161, 161, 0.164)
+            }
+
+            ul {
+                list-style-type: none;
+            }
         </style>
+
+        <paper-button raised on-click="open">Procesador</paper-button>
+
+        <paper-dialog class="modalOfReports" id="dialog" modal>
+            <h2>Procesadores Disponibles</h2>
+
+            <paper-dialog-scrollable>
+                <ul>
+                    <template is="dom-repeat" items="[[processorList]]">
+                        <li class="chosen-li" on-click="close">[[item.provider]] - Nucleo(s) [[item.cores]] - Serial: [[item.serial]]
+                        </li>
+                    </template>
+                </ul>
+            </paper-dialog-scrollable>
+
+            <div class="buttons">
+
+                <paper-button class="exit-button" on-click="exitWindow" dialog-dismiss>Cancelar</paper-button>
+
+                <paper-button class="accept-btn" on-click="printChosenRam" dialog-confirm autofocus>Acceptar
+                </paper-button>
+
+            </div>
+        </paper-dialog>
+
         <!-- <p>Cargando Procesador...</p>
         <template is="dom-if" if="[[isProcessorReady]]">
             Procesador: [[processor.provider]][[processor.serial]] - [[processor.cores]] Nucleo(s)
@@ -31,6 +73,13 @@
                         type: Object,
                         value: () => {
                             return []
+                        },
+                        notify: true
+                    },
+                    processorList: {
+                        type: Array,
+                        value: () => {
+                            return [{}]
                         }
                     },
                     isProcessorReady: {
@@ -40,6 +89,17 @@
                     }
                 };
             }
+
+            open() {
+                this.$.dialog.open()
+            }
+
+            close(e) {
+                this.isProcessorReady = true
+                this.processor = e.model.get('item')
+                this.$.dialog.close()
+            }
+
             ready() {
                 super.ready()
                 let request = document.createElement('iron-request')
@@ -54,7 +114,7 @@
 
                 request.completes.then(success => {
                     setTimeout(() => {
-                        this.processor = success.response[0]
+                        this.processorList = success.response
                         this.isProcessorReady = true
                     }, 2000);
                 }).catch(error => {

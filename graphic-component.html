@@ -7,7 +7,50 @@
             :host {
                 display: block;
             }
+
+            .modalOfReports {
+                width: 700px;
+                height: 550px;
+            }
+
+            .chosen-li {
+                padding: 15px;
+            }
+
+            .chosen-li:hover {
+                background: rgba(161, 161, 161, 0.164)
+            }
+
+            ul {
+                list-style-type: none;
+            }
         </style>
+
+        <paper-button raised on-click="open">Tarjeta Grafica</paper-button>
+
+        <paper-dialog class="modalOfReports" id="dialog" modal>
+            <h2>Tarjetas graficas Disponibles</h2>
+
+            <paper-dialog-scrollable>
+                <ul>
+                    <template is="dom-repeat" items="[[graphicList]]">
+                        <li class="chosen-li" on-click="close">[[item.size]] [[item.provider]] [[item.title]]
+                        </li>
+                    </template>
+                </ul>
+            </paper-dialog-scrollable>
+
+            <div class="buttons">
+
+                <paper-button class="exit-button" on-click="exitWindow" dialog-dismiss>Cancelar</paper-button>
+
+                <paper-button class="accept-btn" on-click="printChosenRam" dialog-confirm autofocus>Acceptar
+                </paper-button>
+
+            </div>
+        </paper-dialog>
+
+
         <!-- <p>Cargando Taerjeta Grafica...</p>
         <template is="dom-if" if="[[isGraphicReady]]">
             Tarjeta Grafica: [[graphic.size]] [[graphic.provider]] [[graphic.title]]
@@ -31,6 +74,13 @@
                         type: Object,
                         value: () => {
                             return []
+                        },
+                        notify: true
+                    },
+                    graphicList: {
+                        type: Array,
+                        value: () => {
+                            return [{}]
                         }
                     },
                     isGraphicReady: {
@@ -39,6 +89,16 @@
                         notify: true
                     }
                 };
+            }
+
+            open() {
+                this.$.dialog.open()
+            }
+
+            close(e) {
+                this.isGraphicReady = true
+                this.graphic = e.model.get('item')
+                this.$.dialog.close()
             }
             ready() {
                 super.ready()
@@ -54,7 +114,7 @@
 
                 request.completes.then(success => {
                     setTimeout(() => {
-                        this.graphic = success.response[0]
+                        this.graphicList = success.response
                         this.isGraphicReady = true
                     }, 2000);
                 }).catch(error => {

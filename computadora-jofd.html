@@ -61,6 +61,11 @@
       .pink {
         color: purple
       }
+
+      .inline {
+        display: inline;
+        margin: 0 1em 0 1em;
+      }
     </style>
 
     <div class="container">
@@ -69,7 +74,7 @@
           <p>Computadora de Alex</p>
           <div class="principal-buttons">
             <paper-icon-button icon="settings" disabled="[[!isOff]]" on-click="showSettings"></paper-icon-button>
-            <paper-icon-button icon="restore" disabled="[[isOff]]"></paper-icon-button>
+            <paper-icon-button icon="restore" disabled="[[isOff]]" on-click="restorePC"></paper-icon-button>
             <paper-icon-button icon="power-settings-new" on-click="turnOnComputer"></paper-icon-button>
           </div>
         </div>
@@ -80,7 +85,8 @@
       <div class="container">
         <paper-card class="margin">
           <div class="card-content">
-            <config-component ram-list={{ramList}}></config-component>
+            <config-component ram="{{ram}}" hdd="{{hdd}}" processor="{{processor}}" graphic="{{graphic}}">
+            </config-component>
           </div>
         </paper-card>
       </div>
@@ -89,8 +95,10 @@
     <template is="dom-if" if=[[!isOff]]>
       <div class="container">
         <paper-card class="paper-card-bash">
-          <div class="blue">Team</div>
-          <div class="pink">Cells </div> (build 3.0)
+          <div class="inline">
+            <div class="blue">Team</div>
+            <div class="pink">Cells </div> (build 3.0)
+          </div>
           <br>
           Cargando componentes del sistema
           <template is="dom-repeat" items="[[messages]]">
@@ -99,7 +107,6 @@
         </paper-card>
       </div>
     </template>
-
     <!-- <ram-component is-ram-redy="{{isRamRedy}}" ram-list="{{ramList}}"></ram-component>
           <template is="dom-if" if="{{isRamRedy}}">
             <hdd-component is-hdd-ready="{{isHddReady}}" hdd-list="{{hddList}}"></hdd-component>
@@ -135,7 +142,25 @@
             type: Boolean,
             value: false
           },
+          ram: {
+            type: Object,
+            value: () => {
+              return []
+            },
+          },
           hdd: {
+            type: Object,
+            value: () => {
+              return []
+            }
+          },
+          processor: {
+            type: Object,
+            value: () => {
+              return []
+            }
+          },
+          graphic: {
             type: Object,
             value: () => {
               return []
@@ -150,6 +175,9 @@
         };
       }
 
+      observe(newValue, oldValue) {
+        console.log(oldValue + " - " + newValue)
+      }
       turnOnComputer() {
         if (this.isOff) {
           this.configMode = false
@@ -162,30 +190,103 @@
             this.notifyPath('messages', this.messages)
           }, 3000);
 
-          setTimeout(() => {
-            this.push('messages', {
-              messageTitle: 'RAM: 16GB - Seagate (serial22738) 220MHz',
-            })
-            this.notifyPath('messages', this.messages)
-          }, 3000);
+          if (this.ram.size) {
+            setTimeout(() => {
+              this.push('messages', {
+                messageTitle: 'RAM: ' + this.ram.size + ' - ' + this.ram.provider + ' (serial' + this.ram.serial + ')',
+              })
+              this.notifyPath('messages', this.messages)
+            }, 6000);
+          } else {
+            setTimeout(() => {
+              this.push('messages', {
+                messageTitle: 'RAM: 16GB - Seagate (serial22738) 220MHz',
+              })
+              this.notifyPath('messages', this.messages)
+            }, 6000);
+          }
 
           setTimeout(() => {
             this.push('messages', {
               messageTitle: 'Cargando HDD ...',
             })
             this.notifyPath('messages', this.messages)
-          }, 3000);
+          }, 6000);
+
+          if (this.hdd.size) {
+            setTimeout(() => {
+              this.push('messages', {
+                messageTitle: 'HDD: ' + this.hdd.size + ' - ' + this.hdd.provider + '(Serial' + this.hdd.serial + ')',
+              })
+              this.notifyPath('messages', this.messages)
+            }, 9000);
+          } else {
+            setTimeout(() => {
+              this.push('messages', {
+                messageTitle: 'HDD: 256GB - Adata(Serial22738) 220Mhz',
+              })
+              this.notifyPath('messages', this.messages)
+            }, 9000);
+          }
 
           setTimeout(() => {
             this.push('messages', {
               messageTitle: 'Cargando Procesador ...',
             })
             this.notifyPath('messages', this.messages)
-          }, 3000);
+          }, 9000);
+
+          if (this.processor.cores) {
+            setTimeout(() => {
+              this.push('messages', {
+                messageTitle: 'Procesador: ' + this.processor.provider + '' + this.processor.serial + ' - ' + this.processor.cores + ' Nucleo(s)',
+              })
+              this.notifyPath('messages', this.messages)
+            }, 12000);
+          } else {
+            setTimeout(() => {
+              this.push('messages', {
+                messageTitle: 'Procesador: Intel450098 - 4 Nucleo(s)',
+              })
+              this.notifyPath('messages', this.messages)
+            }, 12000);
+          }
+
+          setTimeout(() => {
+            this.push('messages', {
+              messageTitle: 'Cargando Graphic Card..',
+            })
+            this.notifyPath('messages', this.messages)
+          }, 12000);
+
+          if (this.graphic.size) {
+            setTimeout(() => {
+              this.push('messages', {
+                messageTitle: 'Graphic Card: ' + this.graphic.size + ' ' + this.graphic.provider + ' ' + this.graphic.title,
+              })
+              this.notifyPath('messages', this.messages)
+            }, 15000);
+          } else {
+            setTimeout(() => {
+              this.push('messages', {
+                messageTitle: 'Graphic Card: 16GB Nvidia TRX1060',
+              })
+              this.notifyPath('messages', this.messages)
+            }, 15000);
+          }
 
         } else {
           this.isOff = true
+          this.splice("messages", 0, this.messages.length)
+          this.notifyPath('messages', this.messages)
         }
+      }
+
+      restorePC() {
+        this.isOff = true
+        this.splice("messages", 0, this.messages.length + 1)
+        this.notifyPath('messages', this.messages)
+        this.turnOnComputer()
       }
 
       showSettings() {
