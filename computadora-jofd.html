@@ -105,11 +105,12 @@
         <paper-card class="margin">
           <div class="card-content">
             <p>Personaliza tu computadora</p>
-
-            <ram-component ram="{{ram}}"></ram-component>
-            <hdd-component hdd="{{hdd}}"></hdd-component>
-            <processor-component processor={{processor}}></processor-component>
-            <graphic-component graphic="{{graphic}}"></graphic-component>
+            <div class="container">
+              <ram-component ram="{{ram}}"></ram-component>
+              <hdd-component hdd="{{hdd}}"></hdd-component>
+              <processor-component processor={{processor}}></processor-component>
+              <graphic-component graphic="{{graphic}}"></graphic-component>
+            </div>
 
             <template is="dom-if" if="{{ram.size}}">
               <p>RAM: [[ram.size]] [[ram.provider]] Serial: [[ram.serial]]</p>
