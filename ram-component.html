@@ -32,6 +32,10 @@
     </style>
 
     <paper-button raised on-click="open">RAM</paper-button>
+    <!-- <vaadin-button theme="secondary">RAM</vaadin-button> -->
+    <script>
+      
+    </script>
 
     <paper-dialog class="modalOfReports" id="dialog" modal>
       <h2>RAM Disponibles</h2>
@@ -45,12 +49,7 @@
       </paper-dialog-scrollable>
 
       <div class="buttons">
-
-        <paper-button class="exit-button" on-click="exitWindow" dialog-dismiss>Cancelar</paper-button>
-
-        <paper-button class="accept-btn" on-click="printChosenRam" dialog-confirm autofocus>Acceptar
-        </paper-button>
-
+        <paper-button class="exit-button" dialog-dismiss>Cancelar</paper-button>
       </div>
     </paper-dialog>
 
@@ -66,7 +65,7 @@
      * @demo demo/index.html
      */
     class RamComponent extends Polymer.Element {
-      static get is() { return 'ram-component'; }
+      static get is() { return 'ram-component' }
       static get properties() {
         return {
           ram: {
@@ -87,7 +86,7 @@
             value: false,
             notify: true
           }
-        };
+        }
       }
 
       open() {
@@ -116,13 +115,13 @@
         request.completes.then(success => {
           setTimeout(() => {
             this.ramList = success.response
-          }, 2000);
+          }, 2000)
         }).catch(error => {
         }).finally(() => {
         })
       }
     }
 
-    window.customElements.define(RamComponent.is, RamComponent);
+    window.customElements.define(RamComponent.is, RamComponent)
   </script>
 </dom-module>

@@ -27,6 +27,7 @@
         </style>
 
         <paper-button raised on-click="open">Tarjeta Grafica</paper-button>
+        <!-- <vaadin-button theme="secondary">TARJETA GRAFICA</vaadin-button> -->
 
         <paper-dialog class="modalOfReports" id="dialog" modal>
             <h2>Tarjetas graficas Disponibles</h2>
@@ -67,7 +68,7 @@
          * @demo demo/index.html
          */
         class GraphicComponent extends Polymer.Element {
-            static get is() { return 'graphic-component'; }
+            static get is() { return 'graphic-component' }
             static get properties() {
                 return {
                     graphic: {
@@ -88,7 +89,7 @@
                         value: false,
                         notify: true
                     }
-                };
+                }
             }
 
             open() {
@@ -116,13 +117,13 @@
                     setTimeout(() => {
                         this.graphicList = success.response
                         this.isGraphicReady = true
-                    }, 2000);
+                    }, 2000)
                 }).catch(error => {
                 }).finally(() => {
                 })
             }
         }
 
-        window.customElements.define(GraphicComponent.is, GraphicComponent);
+        window.customElements.define(GraphicComponent.is, GraphicComponent)
     </script>
 </dom-module>

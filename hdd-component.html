@@ -30,6 +30,7 @@
         </style>
 
         <paper-button raised on-click="open">HDD</paper-button>
+        <!-- <vaadin-button theme="secondary">HDD</vaadin-button> -->
 
         <paper-dialog class="modalOfReports" id="dialog" modal>
             <h2>HDD Disponibles</h2>
@@ -69,7 +70,7 @@
          * @demo demo/index.html
          */
         class HddComponent extends Polymer.Element {
-            static get is() { return 'hdd-component'; }
+            static get is() { return 'hdd-component' }
             static get properties() {
                 return {
                     hdd: {
@@ -90,7 +91,7 @@
                         value: false,
                         notify: true
                     }
-                };
+                }
             }
 
             open() {
@@ -118,7 +119,7 @@
                 request.completes.then(success => {
                     setTimeout(() => {
                         this.hddList = success.response
-                    }, 2000);
+                    }, 2000)
                 }).catch(error => {
                 }).finally(() => {
                 })

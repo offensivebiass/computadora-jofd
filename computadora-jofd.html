@@ -9,6 +9,7 @@
 <link rel="import" href="processor-component.html">
 <link rel="import" href="graphic-component.html">
 <link rel="import" href="config-component.html">
+<link rel="import" href="bower_components/vaadin-icons/vaadin-icons.html">
 
 <dom-module id="computadora-jofd">
   <template>
@@ -48,12 +49,6 @@
         justify-content: center;
       }
 
-      .principal-buttons {
-        right: 20px;
-        top: 20px;
-        position: absolute;
-      }
-
       .blue {
         color: midnightblue
       }
@@ -66,16 +61,40 @@
         display: inline;
         margin: 0 1em 0 1em;
       }
+
+      .modalOfReports {
+        width: 700px;
+        height: 550px;
+      }
+
+      @media only screen and (min-width: 600px) {
+        .principal-buttons {
+          right: 20px;
+          top: 20px;
+          position: absolute;
+        }
+      }
+
+      @media only screen and (max-width: 600px) {
+        .content-card {
+          top: 50%;
+          left: 50%;
+          display: inline-block;
+        }
+      }
     </style>
 
     <div class="container">
       <paper-card>
         <div class="card-content">
-          <p>Computadora de Alex</p>
-          <div class="principal-buttons">
-            <paper-icon-button icon="settings" disabled="[[!isOff]]" on-click="showSettings"></paper-icon-button>
-            <paper-icon-button icon="restore" disabled="[[isOff]]" on-click="restorePC"></paper-icon-button>
-            <paper-icon-button icon="power-settings-new" on-click="turnOnComputer"></paper-icon-button>
+          <div class="content-card">
+            <p>Computadora de Alex</p>
+            <div class="principal-buttons">
+              <paper-icon-button icon="vaadin:cog" disabled="[[!isOff]]" on-click="showSettings"></paper-icon-button>
+              <paper-icon-button icon="vaadin:rotate-left" disabled="[[isOff]]" on-click="restorePC">
+              </paper-icon-button>
+              <paper-icon-button icon="vaadin:power-off" on-click="turnOnComputer"></paper-icon-button>
+            </div>
           </div>
         </div>
       </paper-card>
@@ -85,8 +104,28 @@
       <div class="container">
         <paper-card class="margin">
           <div class="card-content">
-            <config-component ram="{{ram}}" hdd="{{hdd}}" processor="{{processor}}" graphic="{{graphic}}">
-            </config-component>
+            <p>Personaliza tu computadora</p>
+
+            <ram-component ram="{{ram}}"></ram-component>
+            <hdd-component hdd="{{hdd}}"></hdd-component>
+            <processor-component processor={{processor}}></processor-component>
+            <graphic-component graphic="{{graphic}}"></graphic-component>
+
+            <template is="dom-if" if="{{ram.size}}">
+              <p>RAM: [[ram.size]] [[ram.provider]] Serial: [[ram.serial]]</p>
+            </template>
+
+            <template is="dom-if" if="{{hdd.size}}">
+              <p>HDD: [[hdd.size]] [[hdd.provider]] Serial: [[hdd.serial]]</p>
+            </template>
+
+            <template is="dom-if" if="{{processor.cores}}">
+              <p>Procesador: [[processor.provider]] Nucelo(s) [[processor.cores]] Serial: [[processor.serial]]</p>
+            </template>
+
+            <template is="dom-if" if="{{graphic.size}}">
+              <p>Tarjeta grafica: [[graphic.size]] [[graphic.provider]] [[graphic.title]]</p>
+            </template>
           </div>
         </paper-card>
       </div>
@@ -96,8 +135,8 @@
       <div class="container">
         <paper-card class="paper-card-bash">
           <div class="inline">
-            <div class="blue">Team</div>
-            <div class="pink">Cells </div> (build 3.0)
+            <span class="blue">Team</span>
+            <span class="pink">Cells </span> (build 3.0)
           </div>
           <br>
           Cargando componentes del sistema
@@ -107,17 +146,6 @@
         </paper-card>
       </div>
     </template>
-    <!-- <ram-component is-ram-redy="{{isRamRedy}}" ram-list="{{ramList}}"></ram-component>
-          <template is="dom-if" if="{{isRamRedy}}">
-            <hdd-component is-hdd-ready="{{isHddReady}}" hdd-list="{{hddList}}"></hdd-component>
-          </template>
-          <template is="dom-if" if="{{isHddReady}}">
-            <processor-component is-processor-ready="{{isProcessorReady}}" processor-list="{{processorList}}">
-            </processor-component>
-          </template>
-          <template is="dom-if" if="{{isProcessorReady}}">
-            <graphic-component graphic-list="{{graphicList}}"></graphic-component>
-          </template> -->
 
   </template>
 
@@ -172,12 +200,9 @@
               return [{}]
             }
           }
-        };
+        }
       }
 
-      observe(newValue, oldValue) {
-        console.log(oldValue + " - " + newValue)
-      }
       turnOnComputer() {
         if (this.isOff) {
           this.configMode = false
@@ -188,7 +213,7 @@
               messageTitle: 'Cargando RAM ...',
             })
             this.notifyPath('messages', this.messages)
-          }, 3000);
+          }, 3000)
 
           if (this.ram.size) {
             setTimeout(() => {
@@ -196,14 +221,14 @@
                 messageTitle: 'RAM: ' + this.ram.size + ' - ' + this.ram.provider + ' (serial' + this.ram.serial + ')',
               })
               this.notifyPath('messages', this.messages)
-            }, 6000);
+            }, 6000)
           } else {
             setTimeout(() => {
               this.push('messages', {
                 messageTitle: 'RAM: 16GB - Seagate (serial22738) 220MHz',
               })
               this.notifyPath('messages', this.messages)
-            }, 6000);
+            }, 6000)
           }
 
           setTimeout(() => {
@@ -211,7 +236,7 @@
               messageTitle: 'Cargando HDD ...',
             })
             this.notifyPath('messages', this.messages)
-          }, 6000);
+          }, 6000)
 
           if (this.hdd.size) {
             setTimeout(() => {
@@ -219,14 +244,14 @@
                 messageTitle: 'HDD: ' + this.hdd.size + ' - ' + this.hdd.provider + '(Serial' + this.hdd.serial + ')',
               })
               this.notifyPath('messages', this.messages)
-            }, 9000);
+            }, 9000)
           } else {
             setTimeout(() => {
               this.push('messages', {
                 messageTitle: 'HDD: 256GB - Adata(Serial22738) 220Mhz',
               })
               this.notifyPath('messages', this.messages)
-            }, 9000);
+            }, 9000)
           }
 
           setTimeout(() => {
@@ -234,7 +259,7 @@
               messageTitle: 'Cargando Procesador ...',
             })
             this.notifyPath('messages', this.messages)
-          }, 9000);
+          }, 9000)
 
           if (this.processor.cores) {
             setTimeout(() => {
@@ -242,14 +267,14 @@
                 messageTitle: 'Procesador: ' + this.processor.provider + '' + this.processor.serial + ' - ' + this.processor.cores + ' Nucleo(s)',
               })
               this.notifyPath('messages', this.messages)
-            }, 12000);
+            }, 12000)
           } else {
             setTimeout(() => {
               this.push('messages', {
                 messageTitle: 'Procesador: Intel450098 - 4 Nucleo(s)',
               })
               this.notifyPath('messages', this.messages)
-            }, 12000);
+            }, 12000)
           }
 
           setTimeout(() => {
@@ -257,7 +282,7 @@
               messageTitle: 'Cargando Graphic Card..',
             })
             this.notifyPath('messages', this.messages)
-          }, 12000);
+          }, 12000)
 
           if (this.graphic.size) {
             setTimeout(() => {
@@ -265,14 +290,14 @@
                 messageTitle: 'Graphic Card: ' + this.graphic.size + ' ' + this.graphic.provider + ' ' + this.graphic.title,
               })
               this.notifyPath('messages', this.messages)
-            }, 15000);
+            }, 15000)
           } else {
             setTimeout(() => {
               this.push('messages', {
                 messageTitle: 'Graphic Card: 16GB Nvidia TRX1060',
               })
               this.notifyPath('messages', this.messages)
-            }, 15000);
+            }, 15000)
           }
 
         } else {

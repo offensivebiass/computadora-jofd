@@ -27,6 +27,7 @@
         </style>
 
         <paper-button raised on-click="open">Procesador</paper-button>
+        <!-- <vaadin-button theme="secondary">PROCESADOR</vaadin-button> -->
 
         <paper-dialog class="modalOfReports" id="dialog" modal>
             <h2>Procesadores Disponibles</h2>
@@ -66,7 +67,7 @@
          * @demo demo/index.html
          */
         class ProcessorComponent extends Polymer.Element {
-            static get is() { return 'processor-component'; }
+            static get is() { return 'processor-component' }
             static get properties() {
                 return {
                     processor: {
@@ -87,7 +88,7 @@
                         value: false,
                         notify: true
                     }
-                };
+                }
             }
 
             open() {
@@ -116,13 +117,13 @@
                     setTimeout(() => {
                         this.processorList = success.response
                         this.isProcessorReady = true
-                    }, 2000);
+                    }, 2000)
                 }).catch(error => {
                 }).finally(() => {
                 })
             }
         }
 
-        window.customElements.define(ProcessorComponent.is, ProcessorComponent);
+        window.customElements.define(ProcessorComponent.is, ProcessorComponent)
     </script>
 </dom-module>
