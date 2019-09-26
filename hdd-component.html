@@ -5,127 +5,142 @@
 <link rel="import" href="bower_components/paper-button/paper-button.html">
 
 <dom-module id="hdd-component">
-    <template>
-        <style>
-            :host {
-                display: block;
-            }
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
 
-            .modalOfReports {
-                width: 700px;
-                height: 550px;
-            }
+      .chosen-li {
+        padding: 15px;
+      }
 
-            .chosen-li {
-                padding: 15px;
-            }
+      .chosen-li:hover {
+        background: rgba(161, 161, 161, 0.164)
+      }
 
-            .chosen-li:hover {
-                background: rgba(161, 161, 161, 0.164)
-            }
+      ul {
+        list-style-type: none;
+      }
 
-            ul {
-                list-style-type: none;
-            }
-        </style>
+      .button {
+        width: 160px;
+      }
+    </style>
 
-        <paper-button raised on-click="open">HDD</paper-button>
-        <!-- <vaadin-button theme="secondary">HDD</vaadin-button> -->
+    <paper-button class="button" raised on-click="open" disabled="[[!isHddReady]]">HDD</paper-button>
+    <!-- <vaadin-button theme="secondary">HDD</vaadin-button> -->
 
-        <paper-dialog class="modalOfReports" id="dialog" modal>
-            <h2>HDD Disponibles</h2>
+    <paper-dialog id="dialog">
+      <h2>HDD Disponibles</h2>
 
-            <paper-dialog-scrollable>
-                <ul>
-                    <template is="dom-repeat" items="[[hddList]]">
-                        <li class="chosen-li" on-click="close">[[item.size]] [[item.provider]] Serial: [[item.serial]]
-                        </li>
-                    </template>
-                </ul>
-            </paper-dialog-scrollable>
+      <paper-dialog-scrollable>
+        <ul>
+          <template is="dom-repeat" items="[[hddList]]">
+            <li class="chosen-li" on-click="selecHdd">[[item.size]] [[item.provider]] Serial: [[item.serial]]
+            </li>
+          </template>
+        </ul>
+      </paper-dialog-scrollable>
 
-            <div class="buttons">
+      <div>
 
-                <paper-button class="exit-button" on-click="exitWindow" dialog-dismiss>Cancelar</paper-button>
+        <paper-button class="exit-button" on-click="exitWindow" dialog-dismiss>Cancelar</paper-button>
 
-                <paper-button class="accept-btn" on-click="printChosenRam" dialog-confirm autofocus>Acceptar
-                </paper-button>
+        <paper-button class="accept-btn" on-click="acceptHdd" dialog-confirm autofocus>Acceptar
+        </paper-button>
 
-            </div>
-        </paper-dialog>
+      </div>
+    </paper-dialog>
 
-        <!-- <p>Cargando HDD...</p>
+    <!-- <p>Cargando HDD...</p>
         <template is="dom-if" if="[[isHddReady]]">
             HDD: [[hdd.size]] - [[hdd.provider]](Serial[[hdd.serial]])
         </template> -->
-    </template>
+  </template>
 
-    <script>
-        /**
-         * `hdd-component`
-         * 
-         *
-         * @customElement
-         * @polymer
-         * @demo demo/index.html
-         */
-        class HddComponent extends Polymer.Element {
-            static get is() { return 'hdd-component' }
-            static get properties() {
-                return {
-                    hdd: {
-                        type: Object,
-                        value: () => {
-                            return []
-                        },
-                        notify: true
-                    },
-                    hddList: {
-                        type: Array,
-                        value: () => {
-                            return [{}]
-                        }
-                    },
-                    isHddReady: {
-                        type: Boolean,
-                        value: false,
-                        notify: true
-                    }
-                }
+  <script>
+    /**
+     * `hdd-component`
+     * 
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class HddComponent extends Polymer.Element {
+      static get is() { return 'hdd-component' }
+      static get properties() {
+        return {
+          hdd: {
+            type: Object,
+            value: () => {
+              return []
+            },
+            notify: true
+          },
+          hddSelected: {
+            type: Object,
+            value: () => {
+              return []
+            },
+            notify: true
+          },
+          hddList: {
+            type: Array,
+            value: () => {
+              return [{}]
             }
-
-            open() {
-                this.$.dialog.open()
-            }
-
-            close(e) {
-                this.isHddReady = true
-                this.hdd = e.model.get('item')
-                this.$.dialog.close()
-            }
-
-            ready() {
-                super.ready()
-                let request = document.createElement('iron-request')
-                request.send({
-                    method: 'GET',
-                    url: 'http://www.mocky.io/v2/5d80eeb13000004cf28e737a',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    handleAs: 'json'
-                })
-
-                request.completes.then(success => {
-                    setTimeout(() => {
-                        this.hddList = success.response
-                    }, 2000)
-                }).catch(error => {
-                }).finally(() => {
-                })
-            }
+          },
+          isHddReady: {
+            type: Boolean,
+            value: false,
+            notify: true
+          }
         }
+      }
 
-        window.customElements.define(HddComponent.is, HddComponent);
-    </script>
+      open() {
+        this.$.dialog.open()
+      }
+
+      close(e) {
+        /* this.isHddReady = true
+        this.hdd = e.model.get('item') */
+        this.$.dialog.close()
+      }
+
+      selectHdd(e) {
+        this.hddSelected = e.model.get('item')
+      }
+
+      acceptHdd() {
+        this.hdd = this.hddSelected
+      }
+
+      ready() {
+        super.ready()
+        let request = document.createElement('iron-request')
+        request.send({
+          method: 'GET',
+          url: 'http://www.mocky.io/v2/5d80eeb13000004cf28e737a',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          handleAs: 'json'
+        })
+
+        request.completes.then(success => {
+          setTimeout(() => {
+            this.hddList = success.response
+            this.isHddReady = true
+          }, 2000)
+        }).catch(error => {
+        }).finally(() => {
+        })
+      }
+    }
+
+    window.customElements.define(HddComponent.is, HddComponent)
+  </script>
 </dom-module>

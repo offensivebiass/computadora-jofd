@@ -40,10 +40,6 @@
       }
 
       .container {
-        display: -webkit-box;
-        display: -moz-box;
-        display: -ms-flexbox;
-        display: -webkit-flex;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -57,44 +53,47 @@
         color: purple
       }
 
-      .inline {
-        display: inline;
-        margin: 0 1em 0 1em;
+      .card-content-main {
+        display: flex;
+        justify-content: space-between;
       }
 
-      .modalOfReports {
-        width: 700px;
-        height: 550px;
+
+      .container-components {
+        display: -webkit-box;
+        display: -moz-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
-      @media only screen and (min-width: 600px) {
-        .principal-buttons {
-          right: 20px;
-          top: 20px;
-          position: absolute;
+      @media screen and (max-width: 900px) {
+        .container-components {
+          display: block;
+          text-align: center
         }
       }
 
-      @media only screen and (max-width: 600px) {
-        .content-card {
-          top: 50%;
-          left: 50%;
-          display: inline-block;
+      @media screen and (max-width: 420px) {
+        .card-content-main {
+          display: flex;
+          flex-direction: column;
+          text-align: center;
         }
       }
     </style>
 
     <div class="container">
       <paper-card>
-        <div class="card-content">
-          <div class="content-card">
-            <p>Computadora de Alex</p>
-            <div class="principal-buttons">
-              <paper-icon-button icon="vaadin:cog" disabled="[[!isOff]]" on-click="showSettings"></paper-icon-button>
-              <paper-icon-button icon="vaadin:rotate-left" disabled="[[isOff]]" on-click="restorePC">
-              </paper-icon-button>
-              <paper-icon-button icon="vaadin:power-off" on-click="turnOnComputer"></paper-icon-button>
-            </div>
+        <div id="header" class="card-content card-content-main">
+          <p>Computadora de Alex</p>
+          <div class="principal-buttons">
+            <paper-icon-button icon="vaadin:cog" disabled="[[!isOff]]" on-click="showSettings"></paper-icon-button>
+            <paper-icon-button icon="vaadin:rotate-left" disabled="[[isOff]]" on-click="restorePC">
+            </paper-icon-button>
+            <paper-icon-button icon="vaadin:power-off" on-click="turnOnComputer"></paper-icon-button>
           </div>
         </div>
       </paper-card>
@@ -105,9 +104,9 @@
         <paper-card class="margin">
           <div class="card-content">
             <p>Personaliza tu computadora</p>
-            <div class="container">
-              <ram-component ram="{{ram}}"></ram-component>
-              <hdd-component hdd="{{hdd}}"></hdd-component>
+            <div class="container-components">
+              <ram-component class="button" ram="{{ram}}"></ram-component>
+              <hdd-component class="button" hdd="{{hdd}}"></hdd-component>
               <processor-component processor={{processor}}></processor-component>
               <graphic-component graphic="{{graphic}}"></graphic-component>
             </div>
@@ -135,12 +134,8 @@
     <template is="dom-if" if=[[!isOff]]>
       <div class="container">
         <paper-card class="paper-card-bash">
-          <div class="inline">
-            <span class="blue">Team</span>
-            <span class="pink">Cells </span> (build 3.0)
-          </div>
-          <br>
-          Cargando componentes del sistema
+          <p><span class="blue">Team</span><span class="pink"> Cells</span> (build 3.0)</p>
+          <p> Cargando componentes del sistema </p>
           <template is="dom-repeat" items="[[messages]]">
             <p>[[item.messageTitle]]</p>
           </template>
@@ -304,13 +299,13 @@
         } else {
           this.isOff = true
           this.splice("messages", 0, this.messages.length)
-          this.notifyPath('messages', this.messages)
+          /* this.notifyPath('messages', this.messages) */
         }
       }
 
       restorePC() {
         this.isOff = true
-        this.splice("messages", 0, this.messages.length + 1)
+        this.splice("messages", 0, this.messages.length)
         this.notifyPath('messages', this.messages)
         this.turnOnComputer()
       }

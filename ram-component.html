@@ -1,21 +1,14 @@
 <link rel="import" href="../polymer/polymer-element.html">
-<link rel="import" href="bower_components/iron-ajax/iron-ajax.html">
-<link rel="import" href="bower_components/vaadin-dialog/vaadin-dialog.html">
-<link rel="import" href="bower_components/vaadin-button/vaadin-button.html">
 <link rel="import" href="bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="bower_components/paper-button/paper-button.html">
+<link rel="import" href="bower_components/paper-styles/paper-styles.html">
 
 <dom-module id="ram-component">
   <template>
     <style>
       :host {
         display: block;
-      }
-
-      .modalOfReports {
-        width: 700px;
-        height: 550px;
       }
 
       .chosen-li {
@@ -29,27 +22,33 @@
       ul {
         list-style-type: none;
       }
+
+      .button {
+        width: 160px;
+      }
     </style>
 
-    <paper-button raised on-click="open">RAM</paper-button>
+    <paper-button class="button" raised on-click="open" disabled="[[!isRamReady]]">RAM</paper-button>
     <!-- <vaadin-button theme="secondary">RAM</vaadin-button> -->
     <script>
-      
+
     </script>
 
-    <paper-dialog class="modalOfReports" id="dialog" modal>
+    <paper-dialog id="dialog">
       <h2>RAM Disponibles</h2>
 
       <paper-dialog-scrollable>
         <ul>
           <template is="dom-repeat" items="[[ramList]]">
-            <li class="chosen-li" on-click="close">[[item.size]] [[item.provider]] Serial: [[item.serial]]</li>
+            <li class="chosen-li" on-click="selectRam">[[item.size]] [[item.provider]] Serial: [[item.serial]]</li>
           </template>
         </ul>
       </paper-dialog-scrollable>
 
-      <div class="buttons">
-        <paper-button class="exit-button" dialog-dismiss>Cancelar</paper-button>
+      <div>
+        <paper-button dialog-dismiss>Cancelar</paper-button>
+        <paper-button on-click="acceptRam" dialog-confirm autofocus>Acceptar
+        </paper-button>
       </div>
     </paper-dialog>
 
@@ -75,28 +74,25 @@
             },
             notify: true
           },
+          ramSelected: {
+            type: Object,
+            value: () => {
+              return []
+            },
+            notify: true
+          },
           ramList: {
             type: Array,
             value: () => {
               return [{}]
             }
           },
-          isRamRedy: {
+          isRamReady: {
             type: Boolean,
             value: false,
             notify: true
           }
         }
-      }
-
-      open() {
-        this.$.dialog.open()
-      }
-
-      close(e) {
-        this.isRamRedy = true
-        this.ram = e.model.get('item')
-        this.$.dialog.close()
       }
 
       ready() {
@@ -115,10 +111,28 @@
         request.completes.then(success => {
           setTimeout(() => {
             this.ramList = success.response
+            this.isRamReady = true
           }, 2000)
         }).catch(error => {
+          close.error(error)
         }).finally(() => {
         })
+      }
+
+      open() {
+        this.$.dialog.open()
+      }
+
+      selectRam(e) {
+        this.ramSelected = e.model.get('item')
+      }
+
+      acceptRam() {
+        this.ram = this.ramSelected
+      }
+
+      close() {
+        this.$.dialog.close()
       }
     }
 
